@@ -81,7 +81,7 @@ public class FAT {
 		// }
 		// System.out.println();
 		String print[] = new String[arrayFAT.length];
-		for(int i=0;i<print.length;i++)
+		for (int i = 0; i < print.length; i++)
 			print[i] = "-";
 		for (File file : files) {
 			int next = file.getStartingAddress();

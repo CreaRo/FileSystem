@@ -30,7 +30,7 @@ public class MainMemory {
 		// for (int i = 0; i < SIZE_OF_BLOCK; i++) {
 		// word += (char) ('A' + new Random().nextInt(26));
 		// }
-		word = "XXXX";
+		word = "\0\0\0\0";
 		return word;
 	}
 
