@@ -1,8 +1,13 @@
 package OperatingSystem;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.io.FileUtils;
+
 public class FileSystem {
+
+	private String DIVIDER = "~";
 
 	int minimumFileSize = 4;
 
@@ -11,10 +16,30 @@ public class FileSystem {
 
 	public ArrayList<File> root;
 
+	private java.io.File file;
+
 	public FileSystem(FAT fat, MainMemory mainMemory) {
 		this.fat = fat;
 		this.mainMemory = mainMemory;
 		root = new ArrayList<File>();
+
+		file = new java.io.File("FILE_SYSTEM/persistentFileTable.txt");
+		try {
+			if (!file.exists()) {
+				file.createNewFile();
+			} else {
+				String content = FileUtils.readFileToString(file);
+				if (content.contains(DIVIDER))
+					for (int i = 0; i < content.split(DIVIDER).length; i++) {
+						String line = content.split(DIVIDER)[i];
+						root.add(new File(line.split(",")[0].trim(), Integer.parseInt(line.split(",")[1].trim()), Integer
+								.parseInt(line.split(",")[2].trim())));
+					}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public File createFile(String fileName) {
@@ -57,6 +82,7 @@ public class FileSystem {
 		write(newFile, "\0"); /* Write EOF word to newly created file */
 		root.add(newFile);
 
+		saveFileTableToPersistent();
 		return newFile;
 	}
 
@@ -69,6 +95,7 @@ public class FileSystem {
 			currentAddress = nextAddress;
 		}
 		root.remove(file);
+		saveFileTableToPersistent();
 	}
 
 	public void listFiles() {
@@ -79,10 +106,13 @@ public class FileSystem {
 
 	public boolean renameFile(File file, String fileName) {
 
-		if (getFileFromName(fileName) != null)
+		if (getFileFromName(fileName) != null) {
+			System.out.print("\t Same file name exists");
 			return false;
+		}
 
 		file.setName(fileName);
+		saveFileTableToPersistent();
 		return true;
 	}
 
@@ -104,8 +134,6 @@ public class FileSystem {
 
 	public boolean write(File file, int offset, String toWrite) {
 		toWrite += "\0";
-		// System.out.println("Requires " + (1 + ((offset + toWrite.length()) /
-		// mainMemory.SIZE_OF_BLOCK)) + " blocks");
 		/* If file requires more memory, allocate it */
 		if (((offset + toWrite.length()) / mainMemory.SIZE_OF_BLOCK) + 1 > file.getSize()) {
 			int blocksRequired = 1 + ((offset + toWrite.length()) / mainMemory.SIZE_OF_BLOCK) - file.getSize();
@@ -120,6 +148,7 @@ public class FileSystem {
 			mainMemory.writeToMemory(file.getStartingAddress() + block, position, toWrite.substring(i, lengthToWriteTo));
 			i += (mainMemory.SIZE_OF_BLOCK - position);
 		}
+		saveFileTableToPersistent();
 		return true;
 	}
 
@@ -135,7 +164,7 @@ public class FileSystem {
 
 	public boolean allocateMemory(File file, int blocksRequired) {
 		if (fat.getTotalFreeSpace() >= blocksRequired) {
-			System.out.println("Allocating " + blocksRequired + " blocks to file " + file.getName());
+			System.out.println("\t Allocating " + blocksRequired + " blocks to file " + file.getName());
 			int lastIndex = -1;
 			int next = file.getStartingAddress();
 			while (next != -1) {
@@ -152,9 +181,25 @@ public class FileSystem {
 			file.setSize(file.getSize() + blocksRequired);
 			return true;
 		} else {
-			System.out.println("Unable to Allocate More Memory");
+			System.out.println("\t Unable to Allocate More Memory");
 			return false;
 		}
+	}
 
+	private void saveFileTableToPersistent() {
+		StringBuilder builder = new StringBuilder();
+		for (File file : root) {
+			builder.append(file.toString());
+			builder.append(DIVIDER);
+		}
+		/* delete last DIVIDER */
+		if (builder.toString().contains(DIVIDER))
+			builder.deleteCharAt(builder.toString().length() - 1);
+
+		try {
+			FileUtils.write(file, builder.toString(), false);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -8,9 +8,16 @@ public class Main {
 
 		int size = 20;
 
+		java.io.File mainDirectory = new java.io.File("FILE_SYSTEM");
+		mainDirectory.mkdirs();
+
 		MainMemory mainMemory = new MainMemory(size);
 		FAT fat = new FAT(size);
 		FileSystem fileSystem = new FileSystem(fat, mainMemory);
+
+		System.out.println("This is our FAT visualizer. " + "\nIt draws the FAT table at every iteration. "
+				+ "\nA new file is created/deleted with some probablity."
+				+ "\nA line is written if a file is created/deleted during that run." + "\n\n\n");
 
 		for (int i = 0; i < 1000; i++) {
 			if (new Random().nextInt(10) > 4) {
@@ -30,7 +37,11 @@ public class Main {
 			fat.drawFAT(fileSystem.root);
 			// fat.drawFAT();
 			// Thread.sleep(50);
+
 		}
+		System.out.println("\n\n------------------------------------------------"
+				+ "\n\nPlease Go To The Top And Read Description of this Visualizer"
+				+ "\n\n-----------------------------------------------");
 	}
 
 	private static String generateRandomString() {

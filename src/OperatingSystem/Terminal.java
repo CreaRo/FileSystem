@@ -8,15 +8,24 @@ public class Terminal {
 
 		int size = 20;
 
+		java.io.File mainDirectory = new java.io.File("FILE_SYSTEM");
+		mainDirectory.mkdirs();
+
 		MainMemory mainMemory = new MainMemory(size);
 		FAT fat = new FAT(size);
 		FileSystem fileSystem = new FileSystem(fat, mainMemory);
 
-		System.out.println("File Operations on root/ directory");
-		System.out.println("create fileName");
-		System.out.println("del fileName");
-		System.out.println("rename fileName");
-		System.out.println("ls");
+		System.out.println("File Operations on root/ directory only");
+		System.out.println("---------------------------");
+		System.out.println("1. create fileNameWithoutSpaces");
+		System.out.println("2. del fileNameWithoutSpaces");
+		System.out.println("3. rename fileNameWithoutSpaces");
+		System.out.println("4. ls");
+		System.out.println("5. read fileNameWithoutSpaces");
+		System.out.println("6. write fileName dataToWriteWithoutSpaces");
+		System.out.println("7. append fileName dataToWriteWithoutSpaces");
+		System.out.println("8. viz");
+		System.out.println("---------------------------");
 
 		System.out.print("~root/ $ ");
 		Scanner scanner = new Scanner(System.in);
@@ -32,6 +41,7 @@ public class Terminal {
 						log("created " + newFile.getName());
 				} catch (Exception e) {
 					log("syntax error");
+					e.printStackTrace();
 				}
 				break;
 			case "ls":
@@ -47,9 +57,17 @@ public class Terminal {
 					log("deleted " + toDelete.getName());
 				} catch (Exception e) {
 					log("syntax error");
+					e.printStackTrace();
 				}
 				break;
 			case "rename":
+				try {
+					File toRename = fileSystem.getFileFromName(line.split(" ")[1]);
+					fileSystem.renameFile(toRename, line.split(" ")[2]);
+				} catch (Exception e) {
+					log("syntax error");
+					e.printStackTrace();
+				}
 				break;
 			case "read":
 				try {
@@ -57,6 +75,7 @@ public class Terminal {
 					log(fileSystem.read(toReadFile));
 				} catch (Exception e) {
 					log("syntax error");
+					e.printStackTrace();
 				}
 				break;
 			case "write":
@@ -72,6 +91,7 @@ public class Terminal {
 					}
 				} catch (Exception e) {
 					log("syntax error");
+					e.printStackTrace();
 				}
 				break;
 			case "append":
@@ -81,6 +101,7 @@ public class Terminal {
 					log("Appended to file " + toAppendFile.getName());
 				} catch (Exception e) {
 					log("syntax error");
+					e.printStackTrace();
 				}
 				break;
 			case "viz":

@@ -12,6 +12,11 @@ public class File {
 		this.startingAddress = startingAddress;
 	}
 
+	@Override
+	public String toString() {
+		return name + ", " + size + ", " + startingAddress;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -35,5 +40,4 @@ public class File {
 	public void setStartingAddress(int startingAddress) {
 		this.startingAddress = startingAddress;
 	}
-
 }
