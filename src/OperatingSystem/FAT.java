@@ -1,5 +1,8 @@
 package OperatingSystem;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class FAT {
 
 	private int[] arrayFAT;
@@ -61,5 +64,32 @@ public class FAT {
 			System.out.print("[" + arrayFAT[i] + "] ");
 		}
 		System.out.println();
+	}
+
+	public void drawFAT(ArrayList<File> files) {
+		// for (int i = 0; i < arrayFAT.length; i++) {
+		// boolean printed = false;
+		// for (File file : files) {
+		// if (file.getStartingAddress() == i) {
+		// System.out.print("[" + file.getName() + "] ");
+		// printed = true;
+		// }
+		// }
+		// if (!printed)
+		// System.out.print("[ ]");
+		//
+		// }
+		// System.out.println();
+		String print[] = new String[arrayFAT.length];
+		for(int i=0;i<print.length;i++)
+			print[i] = "-";
+		for (File file : files) {
+			int next = file.getStartingAddress();
+			while (next != -1) {
+				print[next] = file.getName();
+				next = getElement(next);
+			}
+		}
+		System.out.println(Arrays.toString(print));
 	}
 }

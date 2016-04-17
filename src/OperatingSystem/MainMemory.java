@@ -1,7 +1,5 @@
 package OperatingSystem;
 
-import java.util.Random;
-
 public class MainMemory {
 
 	public int SIZE_OF_BLOCK = 4;
@@ -16,8 +14,11 @@ public class MainMemory {
 
 	}
 
-	public void writeToMemory(int block, String stringToWrite) {
-		arrayMain[block] = stringToWrite;
+	public void writeToMemory(int block, int position, String stringToWrite) {
+		String content = readFromMemory(block);
+		StringBuilder builder = new StringBuilder(content);
+		builder.insert(position, stringToWrite);
+		arrayMain[block] = builder.substring(0, SIZE_OF_BLOCK);
 	}
 
 	public String readFromMemory(int block) {
@@ -26,9 +27,10 @@ public class MainMemory {
 
 	private String generateRandomString() {
 		String word = "";
-		for (int i = 0; i < SIZE_OF_BLOCK; i++) {
-			word += (char) ('A' + new Random().nextInt(26));
-		}
+		// for (int i = 0; i < SIZE_OF_BLOCK; i++) {
+		// word += (char) ('A' + new Random().nextInt(26));
+		// }
+		word = "XXXX";
 		return word;
 	}
 
