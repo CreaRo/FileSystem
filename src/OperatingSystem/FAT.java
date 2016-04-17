@@ -67,19 +67,6 @@ public class FAT {
 	}
 
 	public void drawFAT(ArrayList<File> files) {
-		// for (int i = 0; i < arrayFAT.length; i++) {
-		// boolean printed = false;
-		// for (File file : files) {
-		// if (file.getStartingAddress() == i) {
-		// System.out.print("[" + file.getName() + "] ");
-		// printed = true;
-		// }
-		// }
-		// if (!printed)
-		// System.out.print("[ ]");
-		//
-		// }
-		// System.out.println();
 		String print[] = new String[arrayFAT.length];
 		for (int i = 0; i < print.length; i++)
 			print[i] = "-";

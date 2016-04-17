@@ -37,6 +37,7 @@ public class FileSystem {
 		 * to -1.
 		 */
 		File newFile = new File(fileName, size, -1);
+
 		int startingAddress = -1;
 		int lastAddress = -1;
 		for (int i = 0; i <= size - 1; i++) {
@@ -93,17 +94,24 @@ public class FileSystem {
 		return null;
 	}
 
-	public void append(File file, String toWrite) {
-		System.out.println("Appending at position " + read(file).indexOf("\0"));
-		write(file, read(file).indexOf("\0"), toWrite);
+	public boolean append(File file, String toWrite) {
+		return write(file, read(file).indexOf("\0"), toWrite);
 	}
 
-	public void write(File file, String toWrite) {
-		write(file, 0, toWrite);
+	public boolean write(File file, String toWrite) {
+		return write(file, 0, toWrite);
 	}
 
-	public void write(File file, int offset, String toWrite) {
+	public boolean write(File file, int offset, String toWrite) {
 		toWrite += "\0";
+		// System.out.println("Requires " + (1 + ((offset + toWrite.length()) /
+		// mainMemory.SIZE_OF_BLOCK)) + " blocks");
+		/* If file requires more memory, allocate it */
+		if (((offset + toWrite.length()) / mainMemory.SIZE_OF_BLOCK) + 1 > file.getSize()) {
+			int blocksRequired = 1 + ((offset + toWrite.length()) / mainMemory.SIZE_OF_BLOCK) - file.getSize();
+			if (!allocateMemory(file, blocksRequired))
+				return false;
+		}
 		for (int i = 0; i < toWrite.length();) {
 			int block = (offset + i) / mainMemory.SIZE_OF_BLOCK;
 			int position = (offset + i) % mainMemory.SIZE_OF_BLOCK;
@@ -112,6 +120,7 @@ public class FileSystem {
 			mainMemory.writeToMemory(file.getStartingAddress() + block, position, toWrite.substring(i, lengthToWriteTo));
 			i += (mainMemory.SIZE_OF_BLOCK - position);
 		}
+		return true;
 	}
 
 	public String read(File file) {
@@ -124,7 +133,28 @@ public class FileSystem {
 		return toRead;
 	}
 
-	private void allocateMoreMemory() {
+	public boolean allocateMemory(File file, int blocksRequired) {
+		if (fat.getTotalFreeSpace() >= blocksRequired) {
+			System.out.println("Allocating " + blocksRequired + " blocks to file " + file.getName());
+			int lastIndex = -1;
+			int next = file.getStartingAddress();
+			while (next != -1) {
+				lastIndex = next;
+				next = fat.getElement(next);
+			}
+			for (int i = 0; i < blocksRequired; i++) {
+				int firstFree = fat.getFreeBlock();
+				fat.setElement(lastIndex, firstFree);
+				fat.setElement(firstFree, -1);
+				lastIndex = firstFree;
+			}
+
+			file.setSize(file.getSize() + blocksRequired);
+			return true;
+		} else {
+			System.out.println("Unable to Allocate More Memory");
+			return false;
+		}
 
 	}
 }
