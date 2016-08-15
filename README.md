@@ -17,5 +17,6 @@ File Operations on root/ directory only
 5. read fileNameWithoutSpaces  
 6. write fileName dataToWriteWithoutSpaces  
 7. append fileName dataToWriteWithoutSpaces  
-8. viz  
+8. viz - displays the current state of the FAT in the form of a table.
+
 ---------------------------  
