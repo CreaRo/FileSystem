@@ -1,15 +1,16 @@
 # FileSystem 
 --- 
-A project for OS course in 6th semester
+A project for my Operating Systems course in 6th semester. Created two modes to interact with our file system implementation. 
 
-Created two modes to interact with our file system implementation. 
+**Terminal/CLI** - Where you can type commands to operate on the file system. Running the code will give you the specific commands that can be run.
 
-Terminal - Where you can type commands to operate on the file system. Running the code will give you the specific commands that can be run. 
-Note, the data is saved in persistence. Hence, even after stopping the code, your files will still be available. 
-FAT Visualizer - An iteration of 1000 random create/delete commands to show you how our FAT table performs and how the linked list structure is implemented. 
+*Note*, the data is saved in persistence. Hence, even after stopping the code, your files will still be available. 
 
-File Operations on root/ directory only  
----------------------------
+**FAT Visualizer** - An iteration of 1000 random create/delete commands to show you how our FAT table performs and how the linked list structure is implemented.
+
+**List of available commands.** 
+File Operations on root/ directory only.
+
 1. create fileNameWithoutSpaces  
 2. del fileNameWithoutSpaces  
 3. rename fileNameWithoutSpaces  
